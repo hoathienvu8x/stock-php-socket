@@ -6,7 +6,7 @@ Data to processing is JSON object string like:
 ```
 [{
 		"Name" : "DX A0",
-		"Month" : "USD CASH",
+		"Month" : "CASH",
 		"Last" : 89.606,
 		"Change" : "-0.06",
 		"PtcChange" : "-0.07",
@@ -23,7 +23,7 @@ Data to processing is JSON object string like:
 		"Time" : "11:06:10"
 	}, {
 		"Name" : "DX H18",
-		"Month" : "USD Index 03/18",
+		"Month" : "03/18",
 		"Last" : 89.59,
 		"Change" : "-0.05",
 		"PtcChange" : "-0.06",
@@ -40,6 +40,96 @@ Data to processing is JSON object string like:
 		"Time" : "11:06:10"
 	}
 ]
+```
+
+**Data server**
+
+Data server code like:
+
+```
+<?php
+header('Content-Type:application/json;charset=utf-8');
+$exchange = array('stock' => array('prefix' => 'DX','name' => 'USD'),'future' => array('prefix' => 'RM','name' => 'Robusta'));
+
+if (!isset($_GET['exchange'])) {
+	exit('[]');
+}
+
+$ex = trim($_GET['exchange']);
+
+if (!isset($exchange[$ex])) {
+	exit('[]');
+}
+$year = '18';
+
+$sm = rand(1,12);
+
+
+$data = array();
+$prefix = $exchange[$ex]['prefix'];
+$pname = $exchange[$ex]['name'];
+
+$am = 'FGHJKMNQUVXZ';
+
+$sym = array(
+	array(
+		'Name' => $prefix.'A0',
+		'Month' => 'CASH'
+	),
+	array(
+		'Name' => $prefix.$am[($sm-1)].$year,
+		'Month' => sprintf($pname.' %2d/'.$year,$sm)
+	)
+);
+do {
+	$sm++;
+	if ($sm > 12) {
+		$sm = 1;
+		$year ++;
+	}
+	$sym[] = array(
+		'Name' => $prefix.$am[($sm-1)].$year,
+		'Month' => sprintf($pname.' %2d/'.$year,$sm)
+	);
+} while (count($sym) < 4);
+
+
+foreach($sym as $ss) {
+	$OpInt = rand(0, 10000);
+	$check = $prefix == 'DX' ? true : false;
+	$Last = $check ? rand(80, 100) : rand(1700, 1985);
+	$Previous = $check ? rand(80, 100) : rand(1700, 1985);
+	$Open = $check ? rand(80, 100) : rand(1700, 1985);
+	$High = $check ? rand(80, 100) : rand(1700, 1985);
+	$Low = min($Last,$Previous,$Open, $High);
+	$Bid = min($Last,$Previous,$Open, $High);
+	$Ask = min($Last,$Previous,$Open, $High);
+	$BidSize = rand(0, 100);
+	$AskSize = rand(0, 100);
+	$Volume = rand(0, 10000);
+	$Change = ($Last - $Previous);
+	$data[] = array(
+		"Name" => $ss['Name'],
+		"Month" => $ss['Month'],
+		"Last" => $Last,
+		"Change" => $Change,
+		"PtcChange" => $Change/100,
+		"Volume" => $Volume,
+		"High" => $High,
+		"Low" => $Low,
+		"Open" => $Open,
+		"Previous" => $Previous,
+		"Bid" => $Bid,
+		"BidSize" => $BidSize,
+		"Ask" => $Ask,
+		"AskSize" => $AskSize,
+		"OpInt" => $OpInt,
+		"Time" => date('H:i:s')
+	);
+}
+
+exit(json_encode($data));
+
 ```
 
 **Run socket server**
