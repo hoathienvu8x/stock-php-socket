@@ -1,6 +1,6 @@
 # Simple Realtime Quote Using PHP Socket + Javascript WebSocket
 
-That is very simple to display realtime quote data using PHP socket server and javascript [WebSocket] (https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) processing data
+That is very simple to display realtime quote data using PHP socket server and javascript [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) processing data
 
 Data to processing is JSON object string like:
 ```
