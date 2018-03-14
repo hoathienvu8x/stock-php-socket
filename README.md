@@ -141,3 +141,5 @@ php -q server.php
 ```
 http://localhost/stock-php-socket/realtime.php
 ```
+
+![img](https://raw.githubusercontent.com/hoathienvu8x/stock-php-socket/master/capture.JPG)
