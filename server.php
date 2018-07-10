@@ -1,10 +1,9 @@
 <?php
 class StockWS {
-	private static $IP_ADDR = '127.0.0.1';
+	private static $IP_ADDR = '0.0.0.0';
 	private static $HTTP_PORT = '8080';
 	private static $socket = null;
 	private static $clients = null;
-	private static $socketpath = '/server.php';
 	private static $magickey = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 	private $null = null;
 	private static $quote = array();
@@ -12,7 +11,7 @@ class StockWS {
 		if (self::$socket == null) {
 			self::$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 			socket_set_option(self::$socket, SOL_SOCKET, SO_REUSEADDR, 1);
-			socket_bind(self::$socket, 0, self::$HTTP_PORT);
+			socket_bind(self::$socket, self::$IP_ADDR, self::$HTTP_PORT);
 			socket_listen(self::$socket);
 			self::$clients = array(self::$socket);
 		}
@@ -32,6 +31,9 @@ class StockWS {
 				// First connect response full data to client connected
 				include dirname(__FILE__) . '/quote.php';
 				$json = @json_decode($json, true);
+				if (!$json) {
+					$json = array();
+				}
 				$rsp = array();
 				foreach($json as $i => $row) {
 					$rsp['row_'.$i] = $row;
@@ -53,6 +55,9 @@ class StockWS {
 			// Get quotes and check response row changed
 			include dirname(__FILE__) . '/quote.php';
 			$json = @json_decode($json, true);
+			if (!$json) {
+				$json = array();
+			}
 			$rsp = array();
 			foreach($json as $i => $row) {
 				if (!isset(self::$quote[$row['Name']])) {
@@ -119,13 +124,12 @@ class StockWS {
 				$headers[$matches[1]] = $matches[2];
 			}
 		}
-		$secKey = $headers['Sec-WebSocket-Key'];
+		$secKey = isset($headers['Sec-WebSocket-Key']) ? $headers['Sec-WebSocket-Key'] : '';
 		$secAccept = base64_encode(pack('H*', sha1($secKey . $magickey)));
-		$upgrade  = "HTTP/1.1 101 Web Socket Protocol Handshake\r\n" .
+		$upgrade  = "HTTP/1.1 101 Switching Protocols\r\n" .
 		"Upgrade: websocket\r\n" .
 		"Connection: Upgrade\r\n" .
-		"WebSocket-Origin: $host\r\n" .
-		"WebSocket-Location: ws://$host:$port/$socketpath\r\n".
+		"Sec-WebSocket-Version: 13\r\n" .
 		"Sec-WebSocket-Accept:$secAccept\r\n\r\n";
 		socket_write($client_conn,$upgrade,strlen($upgrade));
 	}

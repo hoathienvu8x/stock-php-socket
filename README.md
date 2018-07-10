@@ -143,3 +143,10 @@ http://localhost/stock-php-socket/realtime.php
 ```
 
 ![img](https://raw.githubusercontent.com/hoathienvu8x/stock-php-socket/master/capture.JPG)
+
+**Add NGINX configuration run socket**
+
+```
+cp -Rf nginx.conf /etc/nginx/sites-enabled/websocket.conf
+systemctl restart nginx or service nginx restart
+```
