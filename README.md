@@ -141,7 +141,7 @@ php -q server.php
 
 ```
 kill -9 $(netstat -tulpn | grep 8080 | awk '{print $7}' | grep -Eo "([0-9]*)" | awk '{print $1}')
-``
+```
 
 **View results**
 ```
