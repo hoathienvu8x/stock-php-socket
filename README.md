@@ -137,6 +137,12 @@ exit(json_encode($data));
 php -q server.php
 ```
 
+**To stop socket**
+
+```
+kill -9 $(netstat -tulpn | grep 8080 | awk '{print $7}' | grep -Eo "([0-9]*)" | awk '{print $1}')
+``
+
 **View results**
 ```
 http://localhost/stock-php-socket/realtime.php
@@ -151,7 +157,7 @@ cp -Rf nginx.conf /etc/nginx/sites-enabled/websocket.conf
 systemctl restart nginx or service nginx restart
 ```
 
-***Open firewall port 8080 on CentOS 7***
+**Open firewall port 8080 on CentOS 7**
 
 Use this command to find your active zone(s):
 
