@@ -151,7 +151,7 @@ cp -Rf nginx.conf /etc/nginx/sites-enabled/websocket.conf
 systemctl restart nginx or service nginx restart
 ```
 
-*** Open firewall port 8080 on CentOS 7 ***
+***Open firewall port 8080 on CentOS 7***
 
 Use this command to find your active zone(s):
 
